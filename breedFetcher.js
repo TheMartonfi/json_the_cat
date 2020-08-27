@@ -1,17 +1,18 @@
 const request = require('request');
 
-const getBreedName = process.argv[2].toLowerCase();
+const fetchBreedDescription = (breedName, done) => {
+  
+  request(`https://api.thecatapi.com/v1/breeds/search?q=${breedName}`, (err, response, body) => {
+    
+    const data = JSON.parse(body);
+    
+    if (data[0] === undefined) {
+      done(err, null);
+    } else {
+      done(null, data[0].description);
+    }
+    
+  });
+};
 
-request(`https://api.thecatapi.com/v1/breeds/search?q=${getBreedName}`, (err, response, body) => {
-
-  const data = JSON.parse(body);
-
-  if (data[0] === undefined) {
-    return console.log(`The breed '${getBreedName}' is not valid please try again.\n`);
-  } else if (err) {
-    console.log(`ERROR: ${err}`);
-  } else {
-    console.log(data[0].description);
-  }
-
-});
+module.exports = { fetchBreedDescription };
